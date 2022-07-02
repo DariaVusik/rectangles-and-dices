@@ -41,30 +41,18 @@
     let rectangles = [];
 
     function getRectange(mouse_x, mouse_y, widthCells, heightCells) {
-        let x = Math.floor(mouse_x / cellSize);
-        let y = Math.floor(mouse_y / cellSize);
+        let x = Math.min(Math.floor(mouse_x / cellSize), widthCellCount - widthCells);
+        let y = Math.min(Math.floor(mouse_y / cellSize), heightCellCount - heightCells);
         return {'x': x, 'y': y, 'width': widthCells, 'height': heightCells};
     }
 
     function drawRectangle(rectangle, color) {
         // TODO move to getRectangle
         const {x, y, width, height} = rectangle;
-        let topX = x * cellSize - (width - width % 2) * cellSize / 2;
-        let topY = y * cellSize - (height - height % 2) * cellSize / 2;
         context.strokeStyle = color;
-        if (topX < 0) {
-            topX = 0;
-        }
-        if (topY < 0) {
-            topY = 0;
-        }
-        if (topX + width * cellSize > canvas.width) {
-            topX = (widthCellCount - width) * cellSize;
-        }
-        if (topY + height * cellSize > canvas.height) {
-            topY = (heightCellCount - height) * cellSize;
-        }
-        context.strokeRect(topX, topY, cellSize * width, cellSize * height);
+        context.strokeRect(
+            x * cellSize + strokeWidth, y * cellSize + strokeWidth,
+            cellSize * width - strokeWidth, cellSize * height - strokeWidth);
     }
 
     function drawCurrentBoard() {
