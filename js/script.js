@@ -1,4 +1,4 @@
-; (function () {
+;(function () {
     // Load grid
     'use strict';
 
@@ -34,46 +34,67 @@
     image.src = url;
 
     // temp put cell code
-    let cellWidth = 3;
-    let cellHeight = 2;
-    class Rectangle {
-        constructor({ width_in_cells, height_in_cells }) {
 
-            this.width_in_cells = width_in_cells;
-            this.height_in_cells = height_in_cells;
-        }
+    let tempWidth = 3;
+    let tempHeight = 5;
 
-        draw(x, y, color) {
-            let top_x = x - (cellWidth - cellWidth % 2) * cellSize / 2;
-            let top_y = y - (cellHeight - cellHeight % 2) * cellSize / 2;
-            context.strokeStyle = color;
-            if (top_x < 0) {
-                top_x = 0;
-            }
-            if (top_y < 0) {
-                top_y = 0;
-            }
-            if (top_x + cellWidth * cellSize > canvas.width) {
-                top_x = (widthCellCount - cellWidth) * cellSize;
-            }
-            if (top_y + cellHeight * cellSize > canvas.height) {
-                top_y = (heightCellCount - cellHeight) * cellSize;
-            }
-            context.strokeRect(top_x, top_y, cellSize * cellWidth, cellSize * cellHeight);
-        }
+    let rectangles = [];
+
+    function getRectange(mouse_x, mouse_y, widthCells, heightCells) {
+        let x = Math.floor(mouse_x / cellSize);
+        let y = Math.floor(mouse_y / cellSize);
+        return {'x': x, 'y': y, 'width': widthCells, 'height': heightCells};
     }
 
-    let current_figurine = new Rectangle(2, 2);
+    function drawRectangle(rectangle, color) {
+        // TODO move to getRectangle
+        const {x, y, width, height} = rectangle;
+        let topX = x * cellSize - (width - width % 2) * cellSize / 2;
+        let topY = y * cellSize - (height - height % 2) * cellSize / 2;
+        context.strokeStyle = color;
+        if (topX < 0) {
+            topX = 0;
+        }
+        if (topY < 0) {
+            topY = 0;
+        }
+        if (topX + width * cellSize > canvas.width) {
+            topX = (widthCellCount - width) * cellSize;
+        }
+        if (topY + height * cellSize > canvas.height) {
+            topY = (heightCellCount - height) * cellSize;
+        }
+        context.strokeRect(topX, topY, cellSize * width, cellSize * height);
+    }
 
-    canvas.addEventListener('mousemove', ev_mousemove, false);
-    function ev_mousemove(event) {
-        let x = Math.floor(event.clientX / cellSize);
-        let y = Math.floor(event.clientY / cellSize);
-        context.globalCompositeOperation = "destination-over";
-        context.clearRect(0, 0, canvas.width, canvas.height); //somehow keep background 
-        //image.src = url;
-        // TODO can we avoid re-draw?
+    function drawCurrentBoard() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, 0, 0);
-        current_figurine.draw(x * cellSize, y * cellSize, "Red");
+        for (const rectangle of rectangles) {
+            drawRectangle(rectangle, 'Red');
+        }
     }
+
+    canvas.addEventListener('mousemove', onMouseMove, false);
+    function onMouseMove(event) {   
+        context.globalCompositeOperation = "destination-over";
+        drawCurrentBoard();
+        let current_rectangle = getRectange(event.clientX, event.clientY, tempWidth, tempHeight);
+        drawRectangle(current_rectangle, "Red");
+    }
+
+    canvas.addEventListener('click', onMouseClick, false);
+    function onMouseClick(event) {
+        let current_rectangle = getRectange(event.clientX, event.clientY, tempWidth, tempHeight);
+        rectangles.push(current_rectangle);
+        drawCurrentBoard();
+    }
+
+    canvas.addEventListener('contextmenu', function(event) {
+        [tempWidth, tempHeight] = [tempHeight, tempWidth];
+        event.preventDefault();
+        drawCurrentBoard();
+        let current_rectangle = getRectange(event.clientX, event.clientY, tempWidth, tempHeight);
+        drawRectangle(current_rectangle, "Red");
+    });
 })();
