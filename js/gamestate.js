@@ -1,7 +1,4 @@
 'use strict';
-const ROLLING_STATE = 0;
-const PLACEMENT_STATE = 1;
-
 
 class GameState {
     constructor(boardWidth, boardHeigh, currentPlayer = 0) {
@@ -11,10 +8,18 @@ class GameState {
             [],
             []
         ];
+        this.remainingScores = this.boardWidth * this.boardHeight;
+        this.playersScores = [0, 0];
         this.currentPlayerIdx = currentPlayer;
-        this.currentState = ROLLING_STATE;
+        this.currentState = GameState.ROLLING_STATE;
         this.currentRectangleDims = []; // width and height
     }
+
+    static ROLLING_STATE = 0;
+    static PLACEMENT_STATE = 1;
+    static FIRST_WIN = 2;
+    static SECOND_WIN = 3;
+    static DRAW = 4;
 
     switchPlayer() {
         this.currentPlayerIdx = (this.currentPlayerIdx + 1) % 2;
@@ -24,14 +29,33 @@ class GameState {
         if (this.isAllowedRectangle(rectangle)) {
             this.playersRectangles[this.currentPlayerIdx].push(rectangle);
             this.currentRectangleDims = [];
-            this.currentState = ROLLING_STATE;
-            this.switchPlayer();
+            this.currentState = GameState.ROLLING_STATE;
+            this.playersScores[this.currentPlayerIdx] += Rectangles.square(rectangle); 
+            this.checkForWinner();
+            this.switchPlayer();            
+        }
+    }
+
+    checkForWinner() {
+        const [firstPlayerScore, secondPlayerScore] = this.playersScores;
+        const diffScores = firstPlayerScore - secondPlayerScore;
+
+        if (Math.abs(diffScores) > this.remainingScores) {
+            if (diffScores == 0) {
+                this.currentState = GameState.DRAW;
+            }
+            if (diffScores > 0) {
+                this.currentState = GameState.FIRST_WIN;
+            }
+            if (diffScores < 0) {
+                this.currentState = GameState.SECOND_WIN;
+            }
         }
     }
 
     setRectangleDims(dims) {
         this.currentRectangleDims = dims;
-        this.currentState = PLACEMENT_STATE;
+        this.currentState = GameState.PLACEMENT_STATE;
     }
 
     isAllowedRectangle(rectangle) {

@@ -6,7 +6,7 @@
   <!--Google Font-->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
   <!--Stylesheet-->
-  <link rel="stylesheet" href="css/dice_roller.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
@@ -15,8 +15,20 @@
         <img  id="die-1">
         <img  id="die-2">
     </div>
-    <p id="total"></p>
+    <p id="gameState">Game state is here</p>
     <button id="diceButton">ROLL THE DICE</button>
+    <div>
+      <table>
+        <tr>
+          <td>First Player score:</td>
+          <td id="firstPlayerScore">0</td>
+        </tr>
+        <tr>
+          <td>Second Player score:</td>
+          <td id="secondPlayerScore">0</td>
+        </tr>
+      </table>
+    </div>
   </div>
   <div class="gameboard">
     <canvas id="gameboard"></canvas>

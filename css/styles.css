@@ -12,7 +12,6 @@
 }
 
 .container {
-
     width: 400px;
     padding: 50px;
     position: absolute;
@@ -75,4 +74,12 @@ button[disabled] {
     100% {
         transform: rotate(8deg);
     }
+}
+
+table {
+    padding: 20px;
+}
+
+td {
+    padding: 0 15px;
 }
