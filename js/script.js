@@ -27,7 +27,7 @@
     canvas.addEventListener('mousemove', onMouseMove, false);
     function onMouseMove(event) {   
         gameBoard.drawCurrentBoard();
-        let current_rectangle = gameBoard.getRectange(event.clientX, event.clientY, tempWidth, tempHeight);
+        let current_rectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
         let color = gameBoard.isAllowedRectangle(current_rectangle)? ALLOWED_RECTANGLE_COLOR: NOT_ALLOWED_RECTANGLE_COLOR;
 
         gameBoard.drawRectangle(current_rectangle, color);
@@ -35,7 +35,7 @@
 
     canvas.addEventListener('click', onMouseClick, false);
     function onMouseClick(event) {
-        let current_rectangle = gameBoard.getRectange(event.clientX, event.clientY, tempWidth, tempHeight);
+        let current_rectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
 
         if (gameBoard.isAllowedRectangle(current_rectangle)) {
             gameBoard.addRectangle(current_rectangle);
@@ -47,7 +47,7 @@
         [tempWidth, tempHeight] = [tempHeight, tempWidth];
         
         gameBoard.drawCurrentBoard();
-        let current_rectangle = gameBoard.getRectange(event.clientX, event.clientY, tempWidth, tempHeight);
+        let current_rectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
         let color = gameBoard.isAllowedRectangle(current_rectangle)? ALLOWED_RECTANGLE_COLOR: NOT_ALLOWED_RECTANGLE_COLOR;
         gameBoard.drawRectangle(current_rectangle, color);
 
