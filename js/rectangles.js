@@ -26,4 +26,8 @@ class Rectangles {
     
         return true;
     }
+
+    static square(r) {
+        return r.width * r.height;
+    }
 }

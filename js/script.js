@@ -21,45 +21,82 @@
         WIDTH_CELL_COUNT, HEIGHT_CELL_COUNT, CELL_SIZE, STROKE_WIDTH,
         PLAYER_COLORS, ALLOWED_RECTANGLE_COLOR, NOT_ALLOWED_RECTANGLE_COLOR
     );
-    let gameState = new GameState();
-
-    // temp game manager
-
-    let tempWidth = 3;
-    let tempHeight = 5;
-
-    // add initial rectangles
-    gameState.setCurrentPlayer(0);
-    gameState.addRectangle({ 'x': 0, 'y': 0, 'width': tempWidth, 'height': tempHeight }, true);
-    gameState.switchPlayer();
-    gameState.addRectangle({ 'x': WIDTH_CELL_COUNT - tempWidth, 'y': HEIGHT_CELL_COUNT - tempHeight, 'width': tempWidth, 'height': tempHeight }, true);
-    gameState.switchPlayer();
+    let gameState = new GameState(WIDTH_CELL_COUNT, HEIGHT_CELL_COUNT);
+    actualizeUI();
 
     canvas.addEventListener('mousemove', onMouseMove, false);
     function onMouseMove(event) {
-        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
+        if (gameState.currentState === GameState.ROLLING_STATE) return;
+        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, gameState.currentRectangleDims[0], gameState.currentRectangleDims[1]);
         let isAllowedRectangle = gameState.isAllowedRectangle(currentRectangle);
         gameBoard.drawCurrentBoard(gameState.playersRectangles, currentRectangle, isAllowedRectangle);
     }
 
     canvas.addEventListener('contextmenu', function (event) {
-        [tempWidth, tempHeight] = [tempHeight, tempWidth];
-
-        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
+        if (gameState.currentState === GameState.ROLLING_STATE) return;
+        gameState.rotateRectangleDims();
+        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, gameState.currentRectangleDims[0], gameState.currentRectangleDims[1]);
         let isAllowedRectangle = gameState.isAllowedRectangle(currentRectangle);
         gameBoard.drawCurrentBoard(gameState.playersRectangles, currentRectangle, isAllowedRectangle);
 
         event.preventDefault();
     });
 
+    function actualizeUI() {
+        const [firstPlayerScore, secondPlayerScore] = gameState.playersScores;
+        document.getElementById('firstPlayerScore').textContent = firstPlayerScore;
+        document.getElementById('secondPlayerScore').textContent = secondPlayerScore;
+
+        let gameStateString = null;
+        switch (gameState.currentState) {
+            case GameState.ROLLING_STATE:
+              gameStateString = `Player #${gameState.currentPlayerIdx + 1}: roll dice`;
+              break;
+            case GameState.PLACEMENT_STATE:
+              gameStateString = `Player #${gameState.currentPlayerIdx + 1}: place shape`;
+              break;
+            case GameState.FIRST_WIN:
+              gameStateString = 'Player #1 Wins!'
+              break;
+            case GameState.SECOND_WIN:
+              gameStateString = 'Player #2 Wins!'
+              break;
+            case GameState.DRAW:
+              gameStateString = 'Fair!'
+              break;
+          }
+
+          document.getElementById('gameState').textContent = gameStateString;
+    }
+
     canvas.addEventListener('click', onMouseClick, false);
     function onMouseClick(event) {
-        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
+        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, gameState.currentRectangleDims[0], gameState.currentRectangleDims[1]);
 
-        if (gameState.isAllowedRectangle(currentRectangle)) {
+        if (gameState.currentState === GameState.PLACEMENT_STATE && gameState.isAllowedRectangle(currentRectangle)) {
             gameState.addRectangle(currentRectangle);
-            gameState.switchPlayer();
+            diceButton.disabled = false;
+            actualizeUI();
         }
         gameBoard.drawCurrentBoard(gameState.playersRectangles);
+    }
+
+    let diceButton = document.getElementById('diceButton');
+
+    diceButton.addEventListener("click", onButtonClick);
+    function onButtonClick(event) {
+        diceButton.disabled = true;
+        roll( function(dims) {
+            gameState.setRectangleDims(dims);
+            actualizeUI();
+            if (!gameState.hasMove()) {
+                const message = `Player ${gameState.currentPlayerIdx + 1} skips turn`;
+                alert(message);
+                gameState.switchPlayer();
+                gameState.currentState = GameState.ROLLING_STATE;
+                diceButton.disabled = false;
+                actualizeUI();
+            }
+        });
     }
 })();
