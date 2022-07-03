@@ -3,11 +3,27 @@
 <head>
   <meta charset="utf-8">
   <title>Rectanges and Dices</title>
+  <!--Google Font-->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+  <!--Stylesheet-->
+  <link rel="stylesheet" href="css/dice_roller.css">
 </head>
 
 <body>
+  <div class="container">
+    <div class="dice-wrapper">
+        <img  id="die-1">
+        <img  id="die-2">
+    </div>
+    <p id="total"></p>
+    <button onclick="roll()">ROLL THE DICE</button>
+  </div>
+  <div class="gameboard">
     <canvas id="gameboard"></canvas>
+  </div>
+    
 </body>
+<script src="js/dice_roller.js"></script>
 <script src="js/rectangles.js"></script>
 <script src="js/gamestate.js"></script>
 <script src="js/gameboard.js"></script>

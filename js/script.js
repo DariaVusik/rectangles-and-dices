@@ -28,7 +28,6 @@
     let tempWidth = 3;
     let tempHeight = 5;
 
-
     // add initial rectangles
     gameState.setCurrentPlayer(0);
     gameState.addRectangle({ 'x': 0, 'y': 0, 'width': tempWidth, 'height': tempHeight }, true);
@@ -36,11 +35,9 @@
     gameState.addRectangle({ 'x': WIDTH_CELL_COUNT - tempWidth, 'y': HEIGHT_CELL_COUNT - tempHeight, 'width': tempWidth, 'height': tempHeight }, true);
     gameState.switchPlayer();
 
-    gameBoard.drawCurrentBoard(gameState.playersRectangles);
-
     canvas.addEventListener('mousemove', onMouseMove, false);
     function onMouseMove(event) {
-        let currentRectangle = gameBoard.getRectange(event.clientX, event.clientY, tempWidth, tempHeight);
+        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
         let isAllowedRectangle = gameState.isAllowedRectangle(currentRectangle);
         gameBoard.drawCurrentBoard(gameState.playersRectangles, currentRectangle, isAllowedRectangle);
     }
@@ -48,7 +45,7 @@
     canvas.addEventListener('contextmenu', function (event) {
         [tempWidth, tempHeight] = [tempHeight, tempWidth];
 
-        let currentRectangle = gameBoard.getRectange(event.clientX, event.clientY, tempWidth, tempHeight);
+        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
         let isAllowedRectangle = gameState.isAllowedRectangle(currentRectangle);
         gameBoard.drawCurrentBoard(gameState.playersRectangles, currentRectangle, isAllowedRectangle);
 
@@ -57,7 +54,7 @@
 
     canvas.addEventListener('click', onMouseClick, false);
     function onMouseClick(event) {
-        let currentRectangle = gameBoard.getRectange(event.clientX, event.clientY, tempWidth, tempHeight);
+        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
 
         if (gameState.isAllowedRectangle(currentRectangle)) {
             gameState.addRectangle(currentRectangle);
