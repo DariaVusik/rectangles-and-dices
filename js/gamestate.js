@@ -95,6 +95,6 @@ class GameState {
         }
         checkRectange = checkRectange.bind(this);
         let [width, height] = this.currentRectangleDims;
-        return checkRectange(width, height) && checkRectange(height, width);
+        return checkRectange(width, height) || checkRectange(height, width);
     }
 }

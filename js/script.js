@@ -47,6 +47,7 @@
         document.getElementById('firstPlayerScore').textContent = firstPlayerScore;
         document.getElementById('secondPlayerScore').textContent = secondPlayerScore;
 
+        let gameFinished = false;
         let gameStateString = null;
         switch (gameState.currentState) {
             case GameState.ROLLING_STATE:
@@ -57,13 +58,20 @@
               break;
             case GameState.FIRST_WIN:
               gameStateString = 'Player #1 Wins!'
+              gameFinished = true;
               break;
             case GameState.SECOND_WIN:
               gameStateString = 'Player #2 Wins!'
+              gameFinished = true;
               break;
             case GameState.DRAW:
               gameStateString = 'Fair!'
+              gameFinished = true;
               break;
+          }
+
+          if (gameFinished) {
+            diceButton.disabled = true;
           }
 
           document.getElementById('gameState').textContent = gameStateString;
