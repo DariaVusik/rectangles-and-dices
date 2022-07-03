@@ -30,7 +30,9 @@ class GameState {
             this.playersRectangles[this.currentPlayerIdx].push(rectangle);
             this.currentRectangleDims = [];
             this.currentState = GameState.ROLLING_STATE;
+            const rectangleSquare = Rectangles.square(rectangle);
             this.playersScores[this.currentPlayerIdx] += Rectangles.square(rectangle); 
+            this.remainingScores -= rectangleSquare;
             this.checkForWinner();
             this.switchPlayer();            
         }
