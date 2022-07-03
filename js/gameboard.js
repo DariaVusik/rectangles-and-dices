@@ -17,6 +17,9 @@ class GameBoard {
         canvas.width = this.maxWidth * this.cellSizePx + this.strokeWidthPx;
         canvas.height = this.maxHeight * this.cellSizePx + this.strokeWidthPx;
 
+        this.context.font = `${Math.floor(this.cellSizePx*0.8)}px serif`;
+        this.context.textAlign = 'center';
+
         let data = `<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"> \
         <defs> \
             <pattern id="grid" width="${this.cellSizePx}" height="${this.cellSizePx}" patternUnits="userSpaceOnUse"> \
@@ -37,8 +40,6 @@ class GameBoard {
             DOMURL.revokeObjectURL(url);
         }.bind(this)
         this.image.src = url;
-
-        this.rectangles = [];
     }
 
     getRectange(xPx, yPx, widthCells, heightCells) {
@@ -50,9 +51,15 @@ class GameBoard {
     drawRectangle(rectangle, color) {
         const { x, y, width, height } = rectangle;
         this.context.strokeStyle = color;
-        this.context.strokeRect(
-            x * this.cellSizePx + this.strokeWidthPx, y * this.cellSizePx + this.strokeWidthPx,
-            width * this.cellSizePx - this.strokeWidthPx, height * this.cellSizePx - this.strokeWidthPx);
+        this.context.fillStyle = color;
+
+        const xPx = x * this.cellSizePx + this.strokeWidthPx;
+        const yPx = y * this.cellSizePx + this.strokeWidthPx;
+        const widthPx = width * this.cellSizePx - this.strokeWidthPx;
+        const heightPx = height * this.cellSizePx - this.strokeWidthPx;
+        this.context.strokeRect(xPx, yPx, widthPx, heightPx);
+        const rectangleSquare = Rectangles.square(rectangle);
+        this.context.fillText(rectangleSquare, xPx + widthPx / 2, yPx + heightPx / 2);
     }
 
     drawCurrentBoard(playerRectangles, mouseRectangle = null, isAllowedRectangle = false) {
