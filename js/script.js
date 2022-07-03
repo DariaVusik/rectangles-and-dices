@@ -22,7 +22,16 @@
     function onMouseMove(event) {   
         gameBoard.drawCurrentBoard();
         let current_rectangle = gameBoard.getRectange(event.clientX, event.clientY, tempWidth, tempHeight);
-        gameBoard.drawRectangle(current_rectangle, "Red");
+        let color = undefined;
+        
+        if (gameBoard.isAllowedRectangle(current_rectangle)) {
+            color = "Green";
+        }
+        else {
+            color = "Red";
+        }
+
+        gameBoard.drawRectangle(current_rectangle, color);
     }
 
     canvas.addEventListener('click', onMouseClick, false);
@@ -36,7 +45,13 @@
         [tempWidth, tempHeight] = [tempHeight, tempWidth];
         event.preventDefault();
         gameBoard.drawCurrentBoard();
-        let current_rectangle = getRectange(event.clientX, event.clientY, tempWidth, tempHeight);
-        gameBoard.drawRectangle(current_rectangle, "Red");
+        if (gameBoard.isAllowedRectangle(current_rectangle)) {
+            color = "Green";
+        }
+        else {
+            color = "Red";
+        }
+
+        gameBoard.drawRectangle(current_rectangle, color);
     });
 })();

@@ -62,4 +62,12 @@ class GameBoard {
     addRectangle(rectangle) {
         this.rectangles.push(rectangle);
     }
+
+    isAllowedRectangle(rectangle) {
+        if (this.rectangles.some((other) => Rectangles.intersect(rectangle, other))) {
+            return false;
+        }
+
+        return this.rectangles.some((other) => Rectangles.touches(rectangle, other));
+    }
 }
