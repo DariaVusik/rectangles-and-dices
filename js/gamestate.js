@@ -79,4 +79,22 @@ class GameState {
     rotateRectangleDims() {
         this.currentRectangleDims = [this.currentRectangleDims[1], this.currentRectangleDims[0]];
     }
+
+    hasMove() {
+        function checkRectange(width, height) {
+            for (let y = 0; y <= this.boardHeight - height; y++) {
+                for (let x = 0; x <= this.boardWidth - width; x++) {
+                    let [width, height] = this.currentRectangleDims; 
+                    if (this.isAllowedRectangle({'x': x, 'y': y, 'width': width, 'height': height })) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+        checkRectange = checkRectange.bind(this);
+        let [width, height] = this.currentRectangleDims;
+        return checkRectange(width, height) && checkRectange(height, width);
+    }
 }

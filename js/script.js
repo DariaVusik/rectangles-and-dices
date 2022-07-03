@@ -89,6 +89,14 @@
         roll( function(dims) {
             gameState.setRectangleDims(dims);
             actualizeUI();
-        });   
+            if (!gameState.hasMove()) {
+                const message = `Player ${gameState.currentPlayerIdx + 1} skips turn`;
+                alert(message);
+                gameState.switchPlayer();
+                gameState.currentState = GameState.ROLLING_STATE;
+                diceButton.disabled = false;
+                actualizeUI();
+            }
+        });
     }
 })();
