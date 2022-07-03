@@ -1,13 +1,18 @@
 'use strict';
 
 class GameBoard {
-    constructor(canvas, context, boardWidthCells, boardHeightCells, cellSizePx, strokeWidthPx) {
+    constructor(canvas, context, boardWidthCells, boardHeightCells, cellSizePx, strokeWidthPx, player_colors,
+            allowedRectangleColor, disallowedRectangleColor
+        ) {
         this.canvas = canvas;
         this.context = context;
         this.maxWidth = boardWidthCells;
         this.maxHeight = boardHeightCells;
         this.cellSizePx = cellSizePx;
         this.strokeWidthPx = strokeWidthPx;
+        this.playerColors = player_colors;
+        this.allowedRectangleColor = allowedRectangleColor;
+        this.disallowedRectangleColor = disallowedRectangleColor;
 
         canvas.width = this.maxWidth * this.cellSizePx + this.strokeWidthPx;
         canvas.height = this.maxHeight * this.cellSizePx + this.strokeWidthPx;
@@ -43,7 +48,6 @@ class GameBoard {
     }
 
     drawRectangle(rectangle, color) {
-        // TODO move to getRectangle
         const { x, y, width, height } = rectangle;
         this.context.strokeStyle = color;
         this.context.strokeRect(
@@ -51,23 +55,24 @@ class GameBoard {
             width * this.cellSizePx - this.strokeWidthPx, height * this.cellSizePx - this.strokeWidthPx);
     }
 
-    drawCurrentBoard() {
+    drawCurrentBoard(playerRectangles, mouseRectangle = null, isAllowedRectangle = false) {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.drawImage(this.image, 0, 0);
-        for (const rectangle of this.rectangles) {
-            this.drawRectangle(rectangle, 'Red');
-        }
-    }
 
-    addRectangle(rectangle) {
-        this.rectangles.push(rectangle);
-    }
+        let rectanglesWithColor = playerRectangles.map(function(e, i) {
+            return [e, this.playerColors[i]];
+        }.bind(this));
 
-    isAllowedRectangle(rectangle) {
-        if (this.rectangles.some((other) => Rectangles.intersect(rectangle, other))) {
-            return false;
+        for (const [rectangles, color] of rectanglesWithColor) {
+            for (const rectangle of rectangles) {
+                this.drawRectangle(rectangle, color);
+            }
         }
 
-        return this.rectangles.some((other) => Rectangles.touches(rectangle, other));
+        // draw mouse position if any
+        if (mouseRectangle !== null) {
+            let color = isAllowedRectangle? this.allowedRectangleColor: this.disallowedRectangleColor;
+            this.drawRectangle(mouseRectangle, color);
+        }
     }
 }

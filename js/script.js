@@ -1,4 +1,4 @@
-;(function () {
+; (function () {
     // Load grid
     'use strict';
 
@@ -11,46 +11,55 @@
     const ALLOWED_RECTANGLE_COLOR = 'Green';
     const NOT_ALLOWED_RECTANGLE_COLOR = 'Red';
 
+    const PLAYER_COLORS = ['Red', 'Blue']
+
     let canvas = document.getElementById('gameboard');
     let context = canvas.getContext('2d');
 
-    let gameBoard = new GameBoard(canvas, context, WIDTH_CELL_COUNT, HEIGHT_CELL_COUNT, CELL_SIZE, STROKE_WIDTH);
+    let gameBoard = new GameBoard(
+        canvas, context,
+        WIDTH_CELL_COUNT, HEIGHT_CELL_COUNT, CELL_SIZE, STROKE_WIDTH,
+        PLAYER_COLORS, ALLOWED_RECTANGLE_COLOR, NOT_ALLOWED_RECTANGLE_COLOR
+    );
+    let gameState = new GameState();
 
     // temp game manager
 
     let tempWidth = 3;
     let tempHeight = 5;
-    
-    // add initial rectangle
-    gameBoard.addRectangle({'x': 0, 'y': 0, 'width': tempWidth, 'height': tempHeight});
+
+    // add initial rectangles
+    gameState.setCurrentPlayer(0);
+    gameState.addRectangle({ 'x': 0, 'y': 0, 'width': tempWidth, 'height': tempHeight }, true);
+    gameState.switchPlayer();
+    gameState.addRectangle({ 'x': WIDTH_CELL_COUNT - tempWidth, 'y': HEIGHT_CELL_COUNT - tempHeight, 'width': tempWidth, 'height': tempHeight }, true);
+    gameState.switchPlayer();
 
     canvas.addEventListener('mousemove', onMouseMove, false);
-    function onMouseMove(event) {   
-        gameBoard.drawCurrentBoard();
-        let current_rectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
-        let color = gameBoard.isAllowedRectangle(current_rectangle)? ALLOWED_RECTANGLE_COLOR: NOT_ALLOWED_RECTANGLE_COLOR;
-
-        gameBoard.drawRectangle(current_rectangle, color);
+    function onMouseMove(event) {
+        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
+        let isAllowedRectangle = gameState.isAllowedRectangle(currentRectangle);
+        gameBoard.drawCurrentBoard(gameState.playersRectangles, currentRectangle, isAllowedRectangle);
     }
 
-    canvas.addEventListener('click', onMouseClick, false);
-    function onMouseClick(event) {
-        let current_rectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
-
-        if (gameBoard.isAllowedRectangle(current_rectangle)) {
-            gameBoard.addRectangle(current_rectangle);
-            gameBoard.isAllowedRectangle(current_rectangle);
-        }
-    }
-
-    canvas.addEventListener('contextmenu', function(event) {
+    canvas.addEventListener('contextmenu', function (event) {
         [tempWidth, tempHeight] = [tempHeight, tempWidth];
-        
-        gameBoard.drawCurrentBoard();
-        let current_rectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
-        let color = gameBoard.isAllowedRectangle(current_rectangle)? ALLOWED_RECTANGLE_COLOR: NOT_ALLOWED_RECTANGLE_COLOR;
-        gameBoard.drawRectangle(current_rectangle, color);
+
+        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
+        let isAllowedRectangle = gameState.isAllowedRectangle(currentRectangle);
+        gameBoard.drawCurrentBoard(gameState.playersRectangles, currentRectangle, isAllowedRectangle);
 
         event.preventDefault();
     });
+
+    canvas.addEventListener('click', onMouseClick, false);
+    function onMouseClick(event) {
+        let currentRectangle = gameBoard.getRectange(event.layerX, event.layerY, tempWidth, tempHeight);
+
+        if (gameState.isAllowedRectangle(currentRectangle)) {
+            gameState.addRectangle(currentRectangle);
+            gameState.switchPlayer();
+        }
+        gameBoard.drawCurrentBoard(gameState.playersRectangles);
+    }
 })();
