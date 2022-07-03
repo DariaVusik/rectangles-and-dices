@@ -17,8 +17,12 @@ class Rectangles {
     
         // has vertical gap
         if (a.y > b_y2 || b.y > a_y2) return false;
-
-        // TODO forbid corner touches
+       
+        //check corners of b 
+        if (a_x2 === b.x && a_y2 === b.y) return false;
+        if (a.x === b_x2 && a_y2 === b.y) return false;
+        if (a_x2 === b.x && a.y === b_y2) return false;
+        if (a.x === b_x2 && a.y === b_y2) return false;
     
         return true;
     }
