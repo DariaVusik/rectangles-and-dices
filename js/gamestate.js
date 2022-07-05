@@ -20,6 +20,7 @@ class GameState {
     static FIRST_WIN = 2;
     static SECOND_WIN = 3;
     static DRAW = 4;
+    
 
     switchPlayer() {
         this.currentPlayerIdx = (this.currentPlayerIdx + 1) % 2;
@@ -52,6 +53,8 @@ class GameState {
             if (diffScores < 0) {
                 this.currentState = GameState.SECOND_WIN;
             }
+          
+            
         }
     }
 
@@ -97,4 +100,6 @@ class GameState {
         let [width, height] = this.currentRectangleDims;
         return checkRectange(width, height) || checkRectange(height, width);
     }
+
+    
 }

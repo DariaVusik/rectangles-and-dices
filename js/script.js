@@ -71,7 +71,9 @@
           }
 
           if (gameFinished) {
-            diceButton.disabled = true;
+            //diceButton.disabled = true;
+            diceButton.textContent = "RESTART";
+            diceButton.disabled = false;
           }
 
           document.getElementById('gameState').textContent = gameStateString;
@@ -93,6 +95,13 @@
 
     diceButton.addEventListener("click", onButtonClick);
     function onButtonClick(event) {
+
+        if (gameState.currentState === GameState.FIRST_WIN ||
+            gameState.currentState === GameState.SECOND_WIN ||
+            gameState.currentState === GameState.DRAW) {
+              restart();
+            }
+
         diceButton.disabled = true;
         roll( function(dims) {
             gameState.setRectangleDims(dims);
@@ -107,4 +116,17 @@
             }
         });
     }
+
+    function restart() {
+      
+      gameBoard = new GameBoard(canvas, context,
+      WIDTH_CELL_COUNT, HEIGHT_CELL_COUNT, CELL_SIZE, STROKE_WIDTH,
+      PLAYER_COLORS, ALLOWED_RECTANGLE_COLOR, NOT_ALLOWED_RECTANGLE_COLOR);
+      gameState = new GameState(WIDTH_CELL_COUNT, HEIGHT_CELL_COUNT);
+      diceButton.textContent = "ROLL THE DICE";
+      actualizeUI();
+      }
+      
+      
+
 })();
